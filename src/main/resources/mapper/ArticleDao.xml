@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.ArticleDao">
+
+    <sql id="all">aid, create_time, title, description, item_type, t_user.uid, WangxinSupport,
+      price, wangxin_price,image, username, t_article.address, contact, t_article.statue
+    </sql>
+
+    <select id="searchAllArticle" parameterType="model.SearchModel" resultType="dto.SmallArticle">
+        SELECT aid, create_time, title, price, image, username
+        FROM t_article, t_user
+        <where>
+            t_article.uid = t_user.uid
+            <if test="searchValue != null and !&quot;&quot;.equals(searchValue.trim())">
+                AND title LIKE '%' #{searchValue} '%'
+            </if>
+            <if test="item != 0">
+                AND item_type = #{item}
+            </if>
+            AND t_article.statue = 1 AND t_user.statue = 1
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="searchById" resultType="model.Article" parameterType="int">
+        SELECT<include refid="all"/>FROM t_article, t_user WHERE
+        t_article.uid = t_user.uid AND aid = #{aid};
+    </select>
+
+    <insert id="insertArticle" parameterType="model.Article" >
+        INSERT INTO t_article(create_time, title, description, item_type, uid, price, wangxin_price, WangxinSupport, image, address, contact)
+        VALUES(#{createTime},#{title},#{description},#{itemType},#{uid},#{price},#{wangxinSupport},#{wangxinPrice},#{image},#{address},#{contact});
+    </insert>
+
+    <select id="getPublic" parameterType="_int" resultType="dto.SmallArticle">
+        SELECT aid, create_time, title, price, image, username
+        FROM t_article, t_user
+        WHERE t_article.uid = t_user.uid AND t_article.uid = #{uid}
+        ORDER BY create_time DESC;
+    </select>
+
+    <delete id="deleteArticle" parameterType="_int">
+        DELETE FROM t_article WHERE aid = #{aid};
+    </delete>
+
+
+</mapper>

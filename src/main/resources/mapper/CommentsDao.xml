@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.CommentsDao">
+
+
+    <sql id="AllResult">cid, aid, t_comment.uid, contents, create_time, username</sql>
+
+    <select id="queryByArticle" parameterType="_int" resultType="model.Comments">
+        SELECT <include refid="AllResult"/> FROM t_comment, t_user WHERE t_comment.uid = t_user.uid AND aid = #{aid} ORDER BY create_time DESC;
+    </select>
+
+    <select id="queryByUser" parameterType="_int" resultType="model.Comments">
+        SELECT<include refid="AllResult"/>FROM t_comment, t_user WHERE t_comment.uid = t_user.uid AND t_comment.uid = #{uid} ORDER BY create_time DESC;
+    </select>
+
+    <insert id="addComment" parameterType="model.Comments"  useGeneratedKeys= "true" keyProperty= "cid">
+        INSERT INTO t_comment(aid, uid, contents, create_time) VALUES(#{aid}, #{uid}, #{contents}, #{createTime})
+    </insert>
+
+</mapper>
+
